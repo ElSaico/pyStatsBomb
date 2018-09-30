@@ -41,7 +41,7 @@ def get_lineups(matches=None):
         matches = get_matches(competitions.competition_id.unique())
 
     lineups = pd.DataFrame()
-    for match in matches:
+    for _, match in matches.iterrows():
         match_lineups = get_match_lineups(match)
         lineups = lineups.append(match_lineups, ignore_index=True)
     return lineups
@@ -63,7 +63,7 @@ def get_events(matches=None):
         matches = get_matches(competitions.competition_id.unique())
 
     events = pd.DataFrame()
-    for match in matches:
+    for _, match in matches.iterrows():
         match_events = get_match_events(match)
         events = events.append(match_events, ignore_index=True)
     return events
