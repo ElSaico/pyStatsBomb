@@ -24,5 +24,5 @@ deploy:
     secure: CJtE79fxxQ/UjHEWsdENe9pydf65hJKq9hNDeoHVeqgW/ESW7hj1lrWnkmmvegQtshiF8uox3nIJYCj8mG23D3Wq/O9vYvtCGidF4hsIO66IvVmmuIQx6DZLDE6M7ZTSQkxeqlIUCLTqrqz6/h4N+zM/N9Hu9+q9cxMHXCaBjoVpK4ESU0/f7B/B3aNLtrE51tcpveS8VrjcJk1L4UCBpyxAHfpq7aJSTmMsaKUe7GtlyT646AzCuq0iXpOMHUS67C4kN+8lVV2V1PgxD6yjHJstb9wu5GUtwFlh4uHeNDvW8AUMkMZBL6qsdroDUv95zOEYuyplFvlySMrR47V431QW0V4n6qcI/PKGdwZ2Gd/3wGa8YX4SUg0ZHIS1GDaEcqLh8cXjD5bPfgSyDX9X/ldh+A5J8aHFPALcNn2VqgXZrjJu07n7HzpKOUPrCziJd/12r94eLjg0iwRjh1dtqM7zgSvS+VxK5eusdXnEkUuMmeweqOKotVNLiJ3kIP9lLxIfMjklJIU67+/rbY5gF5CpuiAPHYCnSbN/BIybOOyzMgrhrGMBjsxs0mjzna1EBFNRZPU/NoFziKm+Vh+Mmaenqlb7OBWiw/eQUgBXQ2n73Gyro2aECS+f37DCZVZMdNd7TX7Sjk7Xw6HJrBk2+7n7iRbkl1vPtMO0vPF/hfU=
   on:
     tags: true
-    repo: ElSaico/pystatsbomb
+    repo: ElSaico/pyStatsBomb
     python: 3.4
