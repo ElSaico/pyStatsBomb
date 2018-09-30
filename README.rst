@@ -6,15 +6,15 @@ pyStatsBomb
 .. image:: https://img.shields.io/pypi/v/pystatsbomb.svg
         :target: https://pypi.python.org/pypi/pystatsbomb
 
-.. image:: https://img.shields.io/travis/ElSaico/pystatsbomb.svg
-        :target: https://travis-ci.org/ElSaico/pystatsbomb
+.. image:: https://img.shields.io/travis/ElSaico/pyStatsBomb.svg
+        :target: https://travis-ci.org/ElSaico/pyStatsBomb
 
 .. image:: https://readthedocs.org/projects/pystatsbomb/badge/?version=latest
         :target: https://pystatsbomb.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/ElSaico/pystatsbomb/shield.svg
-     :target: https://pyup.io/repos/github/ElSaico/pystatsbomb/
+.. image:: https://pyup.io/repos/github/ElSaico/pyStatsBomb/shield.svg
+     :target: https://pyup.io/repos/github/ElSaico/pyStatsBomb/
      :alt: Updates
 
 
