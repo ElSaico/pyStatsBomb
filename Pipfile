@@ -8,6 +8,7 @@ pandas = "*"
 requests = "*"
 
 [dev-packages]
+bumpversion = "*"
 
 [requires]
 python_version = "3.4"
