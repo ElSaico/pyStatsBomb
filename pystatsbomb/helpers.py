@@ -1,4 +1,5 @@
 import numpy as np
+from pandas.io.json import json_normalize
 
 
 def all_clean(df):
@@ -26,7 +27,20 @@ def clean_locations(df):
 
 
 def goalkeeper_info(df):
-    raise NotImplementedError
+    def get_goalkeeper(ff):
+        dff = json_normalize(ff)
+        filtered = dff[~dff.teammate & (dff['position.name'] == 'Goalkeeper')]
+        if filtered.empty:
+            filtered = filtered.append({}, ignore_index=True)
+        return filtered.iloc[0]
+
+    goalkeepers = df['shot.freeze_frame'].dropna().apply(get_goalkeeper)
+    return df.assign(**{
+        'player.id.GK': goalkeepers['player.id'],
+        'player.name.GK': goalkeepers['player.name'],
+        'location.x.GK': goalkeepers.location.map(lambda gk: gk[0], na_action='ignore'),
+        'location.y.GK': goalkeepers.location.map(lambda gk: gk[1], na_action='ignore'),
+    })
 
 
 def shot_info(df):
