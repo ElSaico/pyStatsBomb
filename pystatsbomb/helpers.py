@@ -44,7 +44,28 @@ def goalkeeper_info(df):
 
 
 def shot_info(df):
-    raise NotImplementedError
+    df = df.assign(**{
+        'location.x': np.where((df['location.x'] == 120) & (df['location.y'] == 40), 119.66666, df['location.x']),
+        'location.x.GK': np.where((df['location.x.GK'] == 120) & (df['location.y.GK'] == 40), 119.88888, df['location.x.GK']),
+    })
+    df = df.assign(**{
+        'DistToGoal': np.sqrt((df['location.x'] - 120) ** 2 + (df['location.y'] - 40) ** 2),
+        'DistToKeeper': np.sqrt((df['location.x.GK'] - 120) ** 2 + (df['location.y.GK'] - 40) ** 2),
+    })
+    df = df.assign(**{
+        'AngleToGoal': np.where(df['location.y'] <= 40, np.arcsin((120 - df['location.x']) / df.DistToGoal), (np.pi / 2) + np.arccos((120 - df['location.x']) / df.DistToGoal)),
+        'AngleToKeeper': np.where(df['location.y.GK'] <= 40, np.arcsin((120 - df['location.x.GK']) / df.DistToKeeper), (np.pi / 2) + np.arccos((120 - df['location.x.GK']) / df.DistToKeeper)),
+    })
+    df = df.assign(**{
+        'AngleToGoal': df.AngleToGoal * 180 / np.pi,
+        'AngleToKeeper': df.AngleToKeeper * 180 / np.pi,
+    })
+    df = df.assign(**{
+        'AngleDeviation': abs(df.AngleToGoal - df.AngleToKeeper),
+        'avevelocity': np.sqrt((df['shot.end_location.x'] - df['location.x']) ** 2 + (df['shot.end_location.y'] - df['location.y']) ** 2) / df.duration,
+        'DistSGK': np.sqrt((df['location.x'] - df['location.x.GK']) ** 2 + (df['location.y'] - df['location.y.GK']) ** 2),
+    })
+    return df
 
 
 def freeze_frame_info(df):
