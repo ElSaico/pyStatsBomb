@@ -22,7 +22,7 @@ def clean_locations(df):
         'pass.end_location.y': pass_end_location.map(lambda l: l[1], na_action='ignore'),
         'shot.end_location.x': shot_end_location.map(lambda l: l[0], na_action='ignore'),
         'shot.end_location.y': shot_end_location.map(lambda l: l[1], na_action='ignore'),
-        'shot.end_location.z': shot_end_location.map(lambda l: l[2] if len(l) < 3 else np.NaN, na_action='ignore'),
+        'shot.end_location.z': shot_end_location.map(lambda l: l[2] if len(l) == 3 else np.NaN, na_action='ignore'),
     })
 
 
