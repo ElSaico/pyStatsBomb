@@ -103,3 +103,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Pandas-friendly data formats
+*.f
+*.pkl
+*.csv
+*.json
