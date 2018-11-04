@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from pandas.io.json import json_normalize
 
 
@@ -73,7 +74,23 @@ def freeze_frame_info(df):
 
 
 def format_elapsed_time(df):
-    raise NotImplementedError
+    df = df.assign(milliseconds=pd.to_datetime(df.timestamp).dt.microsecond // 1000)
+    df = df.assign(ElapsedTime=df.minute*60*1000 + df.second*1000 + df.milliseconds)
+
+    periods = df.groupby(['match_id', 'period']).ElapsedTime.max().reset_index().rename(columns={'ElapsedTime': 'endhalf'})
+    periods.period += 1
+    firsthalf = pd.DataFrame({'match_id': periods.match_id.unique(), 'period': 1, 'endhalf': 0})
+    periods = pd.concat([firsthalf, periods])
+    df = df.merge(periods, how='left', on=['match_id', 'period'], copy=False)
+
+    df[df.period == 1].ElapsedTime += df.endhalf_y
+    df[df.period == 2].ElapsedTime += df.endhalf_y - (45 * 60 * 1000)
+    df[df.period == 3].ElapsedTime += df.endhalf_y - (90 * 60 * 1000)
+    df[df.period == 4].ElapsedTime += df.endhalf_y - (105 * 60 * 1000)
+    df[df.period == 5].ElapsedTime += df.endhalf_y - (120 * 60 * 1000)
+    df.ElapsedTime /= 100
+
+    return df.drop(['endhalf_x', 'endhalf_y'], axis=1)
 
 
 def possession_info(df):
