@@ -94,4 +94,10 @@ def format_elapsed_time(df):
 
 
 def possession_info(df):
-    raise NotImplementedError
+    possession = df.groupby(['match_id', 'possession'])
+    df = df.assign(StartOfPossession=possession.ElapsedTime.transform('min'))
+    df = df.assign(
+        TimeInPoss=df.ElapsedTime - df.StartOfPossession,
+        TimeToPossEnd=possession.ElapsedTime.transform('max') - df.ElapsedTime,
+    )
+    return df
