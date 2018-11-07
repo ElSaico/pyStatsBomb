@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 pandas = "*"
 requests = "*"
+shapely = {extras = ["vectorized"], version = "*"}
 
 [dev-packages]
 bumpversion = "*"

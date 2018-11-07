@@ -1,16 +1,17 @@
 import numpy as np
 import pandas as pd
 from pandas.io.json import json_normalize
+from shapely.geometry import Point, Polygon
 
 
 def all_clean(df):
-    df = clean_locations(df)
-    df = goalkeeper_info(df)
-    df = shot_info(df)
-    df = freeze_frame_info(df)
-    df = format_elapsed_time(df)
-    df = possession_info(df)
-    return df
+    return df\
+        .pipe(clean_locations)\
+        .pipe(goalkeeper_info)\
+        .pipe(shot_info)\
+        .pipe(freeze_frame_info)\
+        .pipe(format_elapsed_time)\
+        .pipe(possession_info)
 
 
 def clean_locations(df):
@@ -70,7 +71,83 @@ def shot_info(df):
 
 
 def freeze_frame_info(df):
-    raise NotImplementedError
+    shots = df[df['type.name'] == 'Shot'][
+        ['id', 'shot.freeze_frame', 'location.x', 'location.y', 'location.x.GK', 'location.y.GK', 'DistToGoal', 'AngleToGoal']
+    ]
+    shots = shots.assign(**{
+        'Angle.New': shots.AngleToGoal.where(shots.AngleToGoal <= 90, 180 - shots.AngleToGoal),
+    })
+    shots = shots.assign(**{
+        'Angle.Rad': shots['Angle.New'] * np.pi / 180,
+    })
+    shots = shots.assign(**{
+        'Dist.x': 120 - shots['location.x'],
+        'Dist.y': (40 - shots['location.y']).abs(),
+        'new.Dx': np.sin(shots['Angle.Rad']) * (shots.DistToGoal + 1),
+        'new.Dy': np.cos(shots['Angle.Rad']) * (shots.DistToGoal + 1),
+    })
+    shots = shots.assign(**{
+        'new.x': 120 - shots['new.Dx'],
+        'new.y': np.where(shots['location.y'] < 40, 40 - shots['new.Dy'], shots['new.Dy'] + 40),
+    })
+
+    ff = pd.concat(
+        [json_normalize(shot['shot.freeze_frame']).assign(df_id=idx)
+         for idx, shot in shots[shots['shot.freeze_frame'].notna()].iterrows()]
+    ).join(shots, on='df_id').rename(columns={'location.x': 'x', 'location.y': 'y'})
+    ff = ff.assign(**{
+        'location.x': ff.location.map(lambda l: l[0], na_action='ignore'),
+        'location.y': ff.location.map(lambda l: l[1], na_action='ignore'),
+    })
+    ff = ff.assign(**{
+        'distance': np.sqrt((ff.x - ff['location.x'])**2 + (ff.y - ff['location.y'])**2)
+    })
+    ff.distance = ff.distance.where(ff.distance != 0, 1/3)
+
+    ff = ff.assign(**{
+        'cone': ff.apply(lambda row: Polygon([(120, 35), (120, 45), (row['new.x'], row['new.y'])]), axis=1),
+        'cone_gk': ff.apply(lambda row: Polygon([
+                (row['location.x.GK'], row['location.y.GK']-1), (row['location.x.GK'], row['location.y.GK']+1),
+                (row.x, row.y+1), (row.x, row.y-1)
+            ]) if not np.isnan(row['location.x.GK']) else np.NaN, axis=1),
+    })
+    ff = ff.assign(**{
+        'InCone': ff.apply(lambda row: Point(row.location).within(row.cone), axis=1),
+        'InCone.GK': ff.apply(lambda row: Point(row.location).within(row.cone_gk) if row.cone_gk == row.cone_gk else False, axis=1),
+    })
+
+    def defender_area(group):
+        return (group['location.x'].max() - group['location.x'].min()) * (group['location.y'].max() - group['location.y'].min())
+    defenders = ff[(ff['location.x'] >= ff.x) & ~ff.teammate & (ff['position.name'] != 'Goalkeeper')]
+    metrics = pd.DataFrame({
+        'density': defenders.groupby('df_id').distance.transform(np.reciprocal).sum(),
+        'density.incone': defenders[defenders.InCone].groupby('df_id').distance.transform(np.reciprocal).sum(),
+        'DefendersInCone': defenders[defenders.InCone].groupby('df_id').df_id.count(),
+        'distance.ToD1': defenders.groupby('df_id').distance.min(),
+        'distance.ToD2': defenders.sort_values('distance').groupby('df_id').distance.nth(1),
+        'InCone.GK': ff[(ff['location.x'] >= ff.x) & ff['InCone.GK']].groupby('df_id').df_id.count(),
+        'AttackersBehindBall': ff[(ff['location.x'] >= ff.x) & ff.teammate].groupby('df_id').df_id.count(),
+        'DefendersBehindBall': defenders.groupby('df_id').df_id.count(),
+        'DefArea': ff[~ff.teammate & ff['position.id'].between(2, 8)].groupby('df_id').apply(defender_area),
+    }).fillna({
+        'density': 0,
+        'density.incone': 0,
+        'AttackersBehindBall': 0,
+        'DefendersBehindBall': 0,
+        'DefendersInCone': 0,
+        'InCone.GK': 0,
+        'DefArea': 1000,
+    })
+    distances_behind = ff[(ff['location.x'] < ff.x) & ~ff.teammate].sort_values('distance').groupby('df_id').distance
+    metrics = metrics.fillna({
+        'distance.ToD1': distances_behind.nth(0),
+        'distance.ToD2': distances_behind.nth(1),
+    }).fillna({
+        'distance.ToD1': 30,
+        'distance.ToD2': 30,
+    })
+
+    return df.join(metrics)
 
 
 def format_elapsed_time(df):
@@ -83,14 +160,14 @@ def format_elapsed_time(df):
     periods = pd.concat([firsthalf, periods])
     df = df.merge(periods, how='left', on=['match_id', 'period'], copy=False)
 
-    df[df.period == 1].ElapsedTime += df.endhalf_y
-    df[df.period == 2].ElapsedTime += df.endhalf_y - (45 * 60 * 1000)
-    df[df.period == 3].ElapsedTime += df.endhalf_y - (90 * 60 * 1000)
-    df[df.period == 4].ElapsedTime += df.endhalf_y - (105 * 60 * 1000)
-    df[df.period == 5].ElapsedTime += df.endhalf_y - (120 * 60 * 1000)
+    df[df.period == 1].ElapsedTime += df.endhalf
+    df[df.period == 2].ElapsedTime += df.endhalf - (45 * 60 * 1000)
+    df[df.period == 3].ElapsedTime += df.endhalf - (90 * 60 * 1000)
+    df[df.period == 4].ElapsedTime += df.endhalf - (105 * 60 * 1000)
+    df[df.period == 5].ElapsedTime += df.endhalf - (120 * 60 * 1000)
     df.ElapsedTime /= 100
 
-    return df.drop(['endhalf_x', 'endhalf_y'], axis=1)
+    return df.drop('endhalf', axis=1)
 
 
 def possession_info(df):
