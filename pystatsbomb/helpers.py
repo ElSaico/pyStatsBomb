@@ -120,8 +120,8 @@ def freeze_frame_info(df):
         return (group['location.x'].max() - group['location.x'].min()) * (group['location.y'].max() - group['location.y'].min())
     defenders = ff[(ff['location.x'] >= ff.x) & ~ff.teammate & (ff['position.name'] != 'Goalkeeper')]
     metrics = pd.DataFrame({
-        'density': defenders.groupby('df_id').distance.transform(np.reciprocal).sum(),
-        'density.incone': defenders[defenders.InCone].groupby('df_id').distance.transform(np.reciprocal).sum(),
+        'density': defenders.groupby('df_id').apply(lambda g: np.sum(np.reciprocal(g.distance))),
+        'density.incone': defenders[defenders.InCone].groupby('df_id').apply(lambda g: np.sum(np.reciprocal(g.distance))),
         'DefendersInCone': defenders[defenders.InCone].groupby('df_id').df_id.count(),
         'distance.ToD1': defenders.groupby('df_id').distance.min(),
         'distance.ToD2': defenders.sort_values('distance').groupby('df_id').distance.nth(1),
