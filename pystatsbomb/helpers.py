@@ -140,8 +140,8 @@ def freeze_frame_info(df):
     })
     distances_behind = ff[(ff['location.x'] < ff.x) & ~ff.teammate].sort_values('distance').groupby('df_id').distance
     metrics = metrics.fillna({
-        'distance.ToD1': distances_behind.nth(0),
-        'distance.ToD2': distances_behind.nth(1),
+        'distance.ToD1': -distances_behind.nth(0),
+        'distance.ToD2': -distances_behind.nth(1),
     }).fillna({
         'distance.ToD1': 30,
         'distance.ToD2': 30,
