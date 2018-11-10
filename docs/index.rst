@@ -1,5 +1,5 @@
 Welcome to pyStatsBomb's documentation!
-======================================
+=======================================
 
 .. toctree::
    :maxdepth: 2

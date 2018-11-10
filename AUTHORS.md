@@ -1,16 +1,15 @@
-=======
 Credits
 =======
 
 Original StatsBombR Library
 ---------------------------
 
-* Derrick Yam <https://github.com/YamStats>
+* Derrick Yam ([@YamStats](https://github.com/YamStats))
 
 Core Developers
 ---------------
 
-* Bruno Marques <https://github.com/ElSaico>
+* Bruno Marques ([@ElSaico](https://github.com/ElSaico))
 
 Contributors
 ------------
