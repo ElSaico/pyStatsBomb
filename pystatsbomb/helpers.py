@@ -160,11 +160,10 @@ def format_elapsed_time(df):
     periods = pd.concat([firsthalf, periods])
     df = df.merge(periods, how='left', on=['match_id', 'period'], copy=False)
 
-    df[df.period == 1].ElapsedTime += df.endhalf
-    df[df.period == 2].ElapsedTime += df.endhalf - (45 * 60 * 1000)
-    df[df.period == 3].ElapsedTime += df.endhalf - (90 * 60 * 1000)
-    df[df.period == 4].ElapsedTime += df.endhalf - (105 * 60 * 1000)
-    df[df.period == 5].ElapsedTime += df.endhalf - (120 * 60 * 1000)
+    df.ElapsedTime[df.period == 2] += df.endhalf - (45 * 60 * 1000)
+    df.ElapsedTime[df.period == 3] += df.endhalf - (90 * 60 * 1000)
+    df.ElapsedTime[df.period == 4] += df.endhalf - (105 * 60 * 1000)
+    df.ElapsedTime[df.period == 5] += df.endhalf - (120 * 60 * 1000)
     df.ElapsedTime /= 1000
 
     return df.drop('endhalf', axis=1)
