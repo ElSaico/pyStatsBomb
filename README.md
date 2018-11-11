@@ -24,37 +24,48 @@ Features
 
 ### StatsBombR compatibility
 
+#### Free data
+
 * `FreeCompetitions`: `pystatsbomb.free.get_competitions()`
 * `FreeMatches`: `pystatsbomb.free.get_matches(competition_ids)`
-* `MultiCompEvents`: TODO
-* `StagingMultiCompEvents`: TODO
 * `StatsBombFreeEvents`: `pystatsbomb.free.get_events(matches=None)`
 * `StatsBombFreeLineups`: `pystatsbomb.free.get_lineups(matches=None)`
-* `allclean`: `pystatsbomb.helpers.all_clean(df)`
+* `get.lineupsFree`: `pystatsbomb.free.get_match_lineups(match)`
+* `get.matchFree`: `pystatsbomb.free.get_match_events(match)`
+
+#### API
+
+* `MultiCompEvents`: TODO
+* `StagingMultiCompEvents`: TODO
 * `alllineups`: TODO
 * `allmatches`: TODO
 * `allstaging`: TODO
-* `annotate_pitchSB`: TODO
-* `cleanlocations`: `pystatsbomb.helpers.clean_locations(df)`
 * `competitions`: TODO
+* `get.lineups`: TODO
+* `get.match`: TODO
+* `get.matches`: TODO
+* `matchesvector`: TODO
+* `stagingcomps`: TODO
+* `stagingevents`: TODO
+* `stagingmatches`: TODO
+
+#### Data cleaning
+
+* `allclean`: `pystatsbomb.helpers.all_clean(df)`
+* `cleanlocations`: `pystatsbomb.helpers.clean_locations(df)`
 * `defensiveinfo`: TODO
 * `formatelapsedtime`: `pystatsbomb.helpers.format_elapsed_time(df)`
 * `freezeframeinfo`: `pystatsbomb.helpers.freeze_frame_info(df)`
 * `get.gamestate`: TODO
-* `get.lineups`: TODO
-* `get.lineupsFree`: `pystatsbomb.free.get_match_lineups(match)`
-* `get.matchFree`: `pystatsbomb.free.get_match_events(match)`
-* `get.matches`: TODO
 * `getOpposingTeam`: TODO
-* `getmatch`: TODO
 * `getminutesplayed`: TODO
 * `goalkeeperinfo`: `pystatsbomb.helpers.goalkeeper_info(df)`
-* `matchesvector`: TODO
 * `possessioninfo`: `pystatsbomb.helpers.possession_info(df)`
 * `shotinfo`: `pystatsbomb.helpers.shot_info(df)`
-* `stagingcomps`: TODO
-* `stagingevents`: TODO
-* `stagingmatches`: TODO
+
+#### Plotting
+
+* `annotate_pitchSB`: TODO
 
 Credits
 -------
