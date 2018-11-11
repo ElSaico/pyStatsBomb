@@ -109,11 +109,11 @@ def freeze_frame_info(df):
         'cone_gk': ff.apply(lambda row: Polygon([
                 (row['location.x.GK'], row['location.y.GK']-1), (row['location.x.GK'], row['location.y.GK']+1),
                 (row.x, row.y+1), (row.x, row.y-1)
-            ]) if not np.isnan(row['location.x.GK']) else np.NaN, axis=1),
+            ]) if not np.isnan(row['location.x.GK']) else Polygon(), axis=1),
     })
     ff = ff.assign(**{
         'InCone': ff.apply(lambda row: Point(row.location).within(row.cone), axis=1),
-        'InCone.GK': ff.apply(lambda row: Point(row.location).within(row.cone_gk) if row.cone_gk == row.cone_gk else False, axis=1),
+        'InCone.GK': ff.apply(lambda row: Point(row.location).within(row.cone_gk), axis=1),
     })
 
     def defender_area(group):
