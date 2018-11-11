@@ -53,7 +53,6 @@ Features
 
 * `allclean`: `pystatsbomb.helpers.all_clean(df)`
 * `cleanlocations`: `pystatsbomb.helpers.clean_locations(df)`
-* `defensiveinfo`: TODO
 * `formatelapsedtime`: `pystatsbomb.helpers.format_elapsed_time(df)`
 * `freezeframeinfo`: `pystatsbomb.helpers.freeze_frame_info(df)`
 * `get.gamestate`: TODO
