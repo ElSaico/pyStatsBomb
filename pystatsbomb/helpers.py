@@ -177,3 +177,11 @@ def possession_info(df):
         TimeToPossEnd=possession.ElapsedTime.transform('max') - df.ElapsedTime,
     )
     return df
+
+
+def get_opposing_team(df):
+    team1 = df.groupby('match_id')['team.name'].min()
+    team2 = df.groupby('match_id')['team.name'].max()
+    team1 = team1[df.match_id].reset_index().set_index(df.index)
+    team2 = team2[df.match_id].reset_index().set_index(df.index)
+    return df.assign(OpposingTeam=np.where(df['team.name'] == team1['team.name'], team2['team.name'], team1['team.name']))

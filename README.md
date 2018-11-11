@@ -56,7 +56,7 @@ Features
 * `formatelapsedtime`: `pystatsbomb.helpers.format_elapsed_time(df)`
 * `freezeframeinfo`: `pystatsbomb.helpers.freeze_frame_info(df)`
 * `get.gamestate`: TODO
-* `getOpposingTeam`: TODO
+* `getOpposingTeam`: `pystatsbomb.helpers.get_opposing_team(df)`
 * `getminutesplayed`: TODO
 * `goalkeeperinfo`: `pystatsbomb.helpers.goalkeeper_info(df)`
 * `possessioninfo`: `pystatsbomb.helpers.possession_info(df)`
